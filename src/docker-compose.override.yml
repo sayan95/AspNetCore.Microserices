@@ -62,6 +62,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "Redis:ConnectionString=basketdb:6379"
+      - "GrpcSettings:DiscountGrpcUrl=http://discount.grpc"
     depends_on:
       - basketdb
     ports:
@@ -77,3 +78,15 @@ services:
       - discountdb
     ports:
       - "8002:80"
+    
+  # Discount gRPC service configuration -----------------#
+  discount.grpc:
+    container_name: dicount.grpc
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DiscountDb:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+    depends_on:
+      - discountdb
+    ports:
+      - "8003:80"
+
