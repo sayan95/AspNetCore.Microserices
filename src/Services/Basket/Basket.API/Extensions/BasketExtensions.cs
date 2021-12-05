@@ -1,5 +1,7 @@
-﻿using Basket.API.Repositories.Classes;
+﻿using Basket.API.GrpcServices;
+using Basket.API.Repositories.Classes;
 using Basket.API.Repositories.Interfaces;
+using Discount.gRPC.Protos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,8 +15,17 @@ namespace Basket.API.Extensions
                 options.Configuration = configuration.GetSection("Redis").GetValue<string>("ConnectionString");
             });
 
-            // add services to DI container
+            // adds services to DI container
             services.AddScoped<IBasketRepository, BasketRepository>();
+
+            // adds grpc client service
+            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(option =>
+            {
+                option.Address = new System.Uri(configuration["GrpcSettings:DiscountGrpcUrl"]);
+            });
+            // adds grpc service to application scope
+            services.AddScoped<DiscountGrpcService>();
+
             return services;
         }
     }

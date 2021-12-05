@@ -20,10 +20,10 @@ namespace Discount.API.Controllers
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<Coupon>> GetDiscount(string productName) {
             var coupon = await _discountRepository.GetDiscount(productName);
-            if(string.Equals(coupon.ProductName, productName))
-                return Ok(coupon);
-
-            return NotFound(coupon);
+            if(coupon == null)
+                return NotFound(coupon);
+                
+            return Ok(coupon);
         }
 
         [HttpPost]

@@ -34,14 +34,22 @@ namespace Discount.gRPC.Repositories.Classes
         // Fetches a discouunt coupon
         public async Task<Coupon> GetDiscount(string productName)
         {
-            var coupon = await npgsqlConnection.QueryFirstOrDefaultAsync<Coupon>(
-               "SELECT * FROM Coupons WHERE ProductName = @ProductName", new { ProductName = productName}
-            );
+            try
+            {
+                var coupon = await npgsqlConnection.QueryFirstOrDefaultAsync<Coupon>(
+                    "SELECT * FROM Coupons WHERE ProductName = @ProductName", new { ProductName = productName }
+                );
 
-            if (coupon == null)
-                return new Coupon { ProductName = "No Discount", Amount = 0, Description = "No discount available" };
+                if (coupon == null)
+                    return new Coupon { ProductName = "No Discount", Amount = 0, Description = "No discount available" };
 
-            return coupon;
+                return coupon;
+            }catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
+
+            return new Coupon { ProductName = "No Discount", Amount = 0, Description = "No discount available" };
         }
 
         // Creates a new discount coupon
