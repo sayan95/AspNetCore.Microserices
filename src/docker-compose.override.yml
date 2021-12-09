@@ -43,6 +43,16 @@ services:
     volumes:
       - pgadmin_data:/root/.pgadmin 
 
+  # Order db configuration
+  orderdb:
+    container_name: orderdb
+    environment:
+        SA_PASSWORD: "sharthak@12345678"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1433:1433"     
+   
 
   # API configurations ------------- #
   # Catalog api configurations ----------- #
@@ -89,4 +99,15 @@ services:
       - discountdb
     ports:
       - "8003:80"
+
+  # Ordering api configuration -----------------# 
+  ordering.api:
+    container_name: ordering.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:OrderConnectionString=Server=orderdb;Database=OrderManager;User Id=sa;Password=sharthak@12345678"
+    depends_on:
+      - orderdb
+    ports:
+      - "8004:80"
 
